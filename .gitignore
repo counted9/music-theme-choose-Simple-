@@ -1,0 +1,12 @@
+# 本地 AI 配置（含密钥，禁止提交）
+config.js
+
+# 依赖
+node_modules/
+
+# 工具工作记忆（非项目源码）
+.workbuddy/
+
+# 系统/编辑器
+.DS_Store
+*.log

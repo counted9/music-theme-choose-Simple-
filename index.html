@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>音乐灵感三步筛选器</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <button id="back-btn" class="back-btn" title="返回并重置到第一步">← 返回</button>
+    <h1 class="app-title">音乐灵感三步筛选器</h1>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <div class="step" data-step="1"><span class="step-num">①</span><span class="step-label">选风格</span></div>
+    <div class="step-sep">→</div>
+    <div class="step" data-step="2"><span class="step-num">②</span><span class="step-label">选主题</span></div>
+    <div class="step-sep">→</div>
+    <div class="step" data-step="3"><span class="step-num">③</span><span class="step-label">看故事</span></div>
+  </nav>
+
+  <main id="step-content" class="step-content"><!-- 由 app.js 渲染 --></main>
+
+  <div id="toast" class="toast">复制成功！</div>
+
+  <!-- 本地 AI 配置：本机文件，不提交代码仓库 -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
