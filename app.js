@@ -144,30 +144,45 @@
       el.classList.toggle('active', n === state.step);
       el.classList.toggle('done', n < state.step);
     });
-    const titles = { 1: '① 选风格', 2: '② 选主题', 3: '③ 看故事' };
+    const titles = { 1: 'I · 选风格', 2: 'II · 选主题', 3: 'III · 看故事' };
     const $title = document.querySelector('.app-title');
     if ($title) $title.textContent = '音乐灵感三步筛选器 · ' + (titles[state.step] || '');
   }
+  /* ---------------------- 线条图标（SVG） ---------------------- */
+  // 统一：fill=none、stroke=currentColor、1.4 描边，随文字色自动适配
+  function icon(name) {
+    const paths = {
+      refresh: '<path d="M21 12a9 9 0 1 1-3.2-6.9"/><path d="M21 3v6h-6"/>',
+      copy: '<rect x="9" y="9" width="12" height="12" rx="1.5"/><path d="M5 15H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5h9.5A1.5 1.5 0 0 1 15 4v1"/>',
+      warn: '<path d="M12 3.5 1.8 20.5h20.4L12 3.5Z"/><path d="M12 10v4.5"/><path d="M12 17.6h.01"/>',
+      note: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+      bulb: '<path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .8 1.6v.6h5.6v-.6c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z"/>',
+      book: '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5Z"/><path d="M4 4.5v18"/>'
+    };
+    return '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (paths[name] || '') + '</svg>';
+  }
+
   function showLoading(msg) {
     $content.innerHTML = '<div class="loading">' + (msg || '生成中…') + '</div>';
   }
   function showError(msg) {
-    $content.innerHTML = '<div class="error">⚠️ ' + escapeHtml(msg) + '</div>';
+    $content.innerHTML = '<div class="error">' + icon('warn') + '<span>' + escapeHtml(msg) + '</span></div>';
   }
 
   function renderStep1() {
     const cards = state.styleOptions.map((s, i) => (
       '<button class="card style-card" data-i="' + i + '">' +
         '<div class="card-en">' + escapeHtml(s.en) + '</div>' +
-        '<div class="card-cn">' + escapeHtml(s.cn) + '</div>' +
+        '<div class="card-cn">' + icon('note') + '<span>' + escapeHtml(s.cn) + '</span></div>' +
       '</button>'
     )).join('');
     $content.innerHTML =
       '<section class="panel">' +
-        '<h2 class="panel-title">① 选择一种音乐风格</h2>' +
+        '<h2 class="panel-title">I · 选择一种音乐风格</h2>' +
         '<p class="hint">从下方随机抽出的 3 个风格中选一个，或刷新换一批。</p>' +
         '<div class="grid">' + cards + '</div>' +
-        '<div class="actions"><button id="refresh-style" class="btn btn-ghost">🔄 刷新风格</button></div>' +
+        '<div class="actions"><button id="refresh-style" class="btn btn-ghost">' + icon('refresh') + '刷新风格</button></div>' +
       '</section>';
 
     $content.querySelectorAll('.style-card').forEach(btn => {
@@ -195,15 +210,15 @@
       state.themeOptions = themes;
       const cards = themes.map((t, i) => (
         '<button class="card theme-card" data-i="' + i + '">' +
-          '<div class="card-cn">' + escapeHtml(t) + '</div>' +
+          '<div class="card-cn">' + icon('bulb') + '<span>' + escapeHtml(t) + '</span></div>' +
         '</button>'
       )).join('');
       $content.innerHTML =
         '<section class="panel">' +
-          '<h2 class="panel-title">② 选择一个创作主题</h2>' +
+          '<h2 class="panel-title">II · 选择一个创作主题</h2>' +
           '<p class="hint">已选风格：<b>' + escapeHtml(state.selectedStyle.cn) + '</b></p>' +
           '<div class="grid">' + cards + '</div>' +
-          '<div class="actions"><button id="refresh-theme" class="btn btn-ghost">🔄 刷新主题</button></div>' +
+          '<div class="actions"><button id="refresh-theme" class="btn btn-ghost">' + icon('refresh') + '刷新主题</button></div>' +
         '</section>';
       $content.querySelectorAll('.theme-card').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -239,26 +254,26 @@
     const styleCopy = state.selectedStyle.en; // 喂给 AI 音乐工具用英文风格标签
     const storyCards = state.stories.map((st, i) => (
       '<div class="story-card">' +
-        '<div class="story-head">故事 ' + (i + 1) + '</div>' +
+        '<div class="story-head">' + icon('book') + '<span>Story ' + (i + 1) + '</span></div>' +
         '<div class="story-body">' + escapeHtml(st) + '</div>' +
-        '<button class="btn btn-copy" data-copy="' + encodeURIComponent(st) + '">📋 复制</button>' +
+        '<button class="btn btn-copy" data-copy="' + encodeURIComponent(st) + '">' + icon('copy') + '复制</button>' +
       '</div>'
     )).join('');
     $content.innerHTML =
       '<section class="panel final-panel">' +
-        '<h2 class="panel-title">③ 看故事</h2>' +
+        '<h2 class="panel-title">III · 看故事</h2>' +
         '<div class="final-style">' +
           '<div class="final-style-label">风格名（喂给 AI 音乐工具用英文）</div>' +
           '<div class="final-style-en">' + escapeHtml(state.selectedStyle.en) + '</div>' +
           '<div class="final-style-cn">' + escapeHtml(state.selectedStyle.cn) + '</div>' +
-          '<button class="btn btn-copy" data-copy="' + encodeURIComponent(styleCopy) + '">📋 复制风格名（英文）</button>' +
+          '<button class="btn btn-copy" data-copy="' + encodeURIComponent(styleCopy) + '">' + icon('copy') + '复制风格名（英文）</button>' +
         '</div>' +
         '<div class="final-theme">' +
           '<div class="final-theme-label">已选主题（第②步）</div>' +
           '<div class="final-theme-cn">' + escapeHtml(state.selectedTheme) + '</div>' +
         '</div>' +
-        '<div class="actions"><button id="refresh-story" class="btn btn-refresh-story">🔄 刷新故事（保持风格+主题）</button></div>' +
-        '<h3 class="block-title">3 个故事灵感</h3>' +
+        '<div class="actions"><button id="refresh-story" class="btn btn-refresh-story">' + icon('refresh') + '刷新故事（保持风格+主题）</button></div>' +
+        '<h3 class="block-title">Three Stories</h3>' +
         '<div class="stories">' + storyCards + '</div>' +
       '</section>';
 
